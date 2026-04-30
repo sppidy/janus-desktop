@@ -1,0 +1,21 @@
+# Build output
+bin/
+obj/
+build.binlog
+*.binlog
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+
+# NuGet
+*.nuget.props
+*.nuget.targets
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+

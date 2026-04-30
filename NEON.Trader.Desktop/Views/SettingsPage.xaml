@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="NEON.Trader.Desktop.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:NEON.Trader.Desktop.Models"
+    NavigationCacheMode="Required"
+    Background="{StaticResource BgBrush}">
+
+    <ScrollViewer Padding="20">
+        <Grid ColumnSpacing="16" RowSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Profiles list -->
+            <Border Grid.Column="0" Style="{StaticResource Card}">
+                <StackPanel Spacing="12">
+                    <Grid>
+                        <TextBlock Text="// PROFILES" Style="{StaticResource CardLabel}" />
+                        <Button Click="AddProfile_Click" HorizontalAlignment="Right"
+                                Style="{StaticResource GhostButton}" Content="+ ADD" />
+                    </Grid>
+                    <ListView x:Name="ProfileList"
+                              Background="Transparent"
+                              SelectionMode="Single"
+                              SelectionChanged="ProfileList_SelectionChanged">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:BackendProfile">
+                                <Grid Padding="6,6,6,6">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="{x:Bind Name}"
+                                               FontFamily="{StaticResource MonoFont}"
+                                               FontWeight="SemiBold"
+                                               CharacterSpacing="100"
+                                               Foreground="{StaticResource TextBrush}" />
+                                    <TextBlock Grid.Row="1" Text="{x:Bind BaseUrl}"
+                                               Style="{StaticResource Muted}" FontSize="10" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Border>
+
+            <!-- Editor -->
+            <Border Grid.Column="1" Style="{StaticResource Card}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="// CONNECTION" Style="{StaticResource CardLabel}" />
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="NAME" Style="{StaticResource Muted}" CharacterSpacing="200" />
+                        <TextBox x:Name="NameBox" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="KIND" Style="{StaticResource Muted}" CharacterSpacing="200" />
+                        <ComboBox x:Name="KindBox" HorizontalAlignment="Stretch">
+                            <ComboBoxItem Content="NSE main"  Tag="NseMain" />
+                            <ComboBoxItem Content="NSE eval"  Tag="NseEval" />
+                            <ComboBoxItem Content="Forex"     Tag="Forex" />
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="BASE URL" Style="{StaticResource Muted}" CharacterSpacing="200" />
+                        <TextBox x:Name="UrlBox" PlaceholderText="https://host:port" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="API KEY" Style="{StaticResource Muted}" CharacterSpacing="200" />
+                        <PasswordBox x:Name="KeyBox" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Style="{StaticResource NeonButton}"
+                                Content="SAVE"
+                                Click="Save_Click" />
+                        <Button Style="{StaticResource GhostButton}"
+                                Content="SET ACTIVE"
+                                Click="SetActive_Click" />
+                        <Button Style="{StaticResource GhostButton}"
+                                Content="DELETE"
+                                Click="Delete_Click" />
+                        <Button Style="{StaticResource GhostButton}"
+                                Content="TEST"
+                                Click="Test_Click" />
+                    </StackPanel>
+
+                    <TextBlock x:Name="StatusText" Style="{StaticResource Muted}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Page>

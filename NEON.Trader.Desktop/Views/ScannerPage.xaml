@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="NEON.Trader.Desktop.Views.ScannerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:NEON.Trader.Desktop.Models"
+    NavigationCacheMode="Required"
+    Background="{StaticResource BgBrush}">
+
+    <ScrollViewer Padding="20">
+        <StackPanel Spacing="16">
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <Grid>
+                        <TextBlock Text="// SCANNER" Style="{StaticResource CardLabel}" VerticalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                            <Button x:Name="RuleBtn"
+                                    Style="{StaticResource GhostButton}"
+                                    Content="RULE SCAN"
+                                    Click="RuleScan_Click" />
+                            <Button x:Name="AiBtn"
+                                    Style="{StaticResource NeonButton}"
+                                    Content="AI SCAN"
+                                    Click="AiScan_Click" />
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock x:Name="StateText"
+                               Text="idle"
+                               Style="{StaticResource Muted}" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="// SIGNALS" Style="{StaticResource CardLabel}" />
+                    <ListView x:Name="SignalsList"
+                              Background="Transparent"
+                              SelectionMode="None">
+                        <ListView.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid Padding="6,4" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="SYM"    Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="0" />
+                                    <TextBlock Text="SIGNAL" Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="1" />
+                                    <TextBlock Text="PRICE"  Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="2" />
+                                    <TextBlock Text="CONF"   Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="3" />
+                                    <TextBlock Text="SL"     Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="4" />
+                                    <TextBlock Text="TGT"    Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="5" />
+                                    <TextBlock Text="REASON" Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="6" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.HeaderTemplate>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SignalRowVm">
+                                <Grid Padding="6,4" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Bind Symbol}"     Style="{StaticResource Mono}" Grid.Column="0" />
+                                    <TextBlock Text="{x:Bind SignalDir}"  Style="{StaticResource Mono}" FontWeight="SemiBold"
+                                               Foreground="{x:Bind SignalBrush}" Grid.Column="1" />
+                                    <TextBlock Text="{x:Bind PriceText}"  Style="{StaticResource Mono}" Grid.Column="2" />
+                                    <TextBlock Text="{x:Bind ConfText}"   Style="{StaticResource Mono}" Grid.Column="3" />
+                                    <TextBlock Text="{x:Bind SlText}"     Style="{StaticResource Mono}" Grid.Column="4" />
+                                    <TextBlock Text="{x:Bind TgtText}"    Style="{StaticResource Mono}" Grid.Column="5" />
+                                    <TextBlock Text="{x:Bind Reason}"     Style="{StaticResource Muted}" TextWrapping="Wrap" Grid.Column="6" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Border>
+
+            <TextBlock x:Name="ErrorText"
+                       Style="{StaticResource Muted}"
+                       Foreground="{StaticResource DownBrush}" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

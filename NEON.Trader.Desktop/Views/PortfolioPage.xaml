@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="NEON.Trader.Desktop.Views.PortfolioPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:NEON.Trader.Desktop.Models"
+    NavigationCacheMode="Required"
+    Background="{StaticResource BgBrush}">
+
+    <ScrollViewer Padding="20">
+        <StackPanel Spacing="16">
+
+            <!-- KPI row -->
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Style="{StaticResource Card}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="// TOTAL VALUE" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="TotalValueText" Text="—" Style="{StaticResource KpiValue}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Card}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="// CASH" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="CashText" Text="—" Style="{StaticResource KpiValue}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Card}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="// RETURN" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="ReturnText" Text="—" Style="{StaticResource KpiValue}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Style="{StaticResource Card}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="// POSITIONS" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="PosCountText" Text="—" Style="{StaticResource KpiValue}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- BUY order panel -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="// PLACE ORDER" Style="{StaticResource CardLabel}" />
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="SYMBOL" Style="{StaticResource Muted}" CharacterSpacing="200" />
+                            <AutoSuggestBox x:Name="BuySymbol" MinWidth="260"
+                                            PlaceholderText="e.g. TATASTEEL.NS"
+                                            TextChanged="Symbol_TextChanged"
+                                            QuerySubmitted="Buy_QuerySubmitted" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="QUANTITY" Style="{StaticResource Muted}" CharacterSpacing="200" />
+                            <TextBox x:Name="BuyQty" Width="100" PlaceholderText="auto" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="LIMIT PRICE" Style="{StaticResource Muted}" CharacterSpacing="200" />
+                            <TextBox x:Name="BuyPrice" Width="120" PlaceholderText="live" />
+                        </StackPanel>
+                        <StackPanel Spacing="4" VerticalAlignment="Bottom">
+                            <Button x:Name="BuyButton" Content="BUY" Style="{StaticResource NeonButton}" Click="Buy_Click" MinWidth="110" />
+                        </StackPanel>
+                        <TextBlock x:Name="OrderState" Text="" Style="{StaticResource Muted}" VerticalAlignment="Bottom" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="10"
+                               Text="Quantity empty ⇒ Kelly-sized from current cash. Price empty ⇒ live quote." />
+                </StackPanel>
+            </Border>
+
+            <!-- Positions with SELL button -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <Grid>
+                        <TextBlock Text="// OPEN POSITIONS" Style="{StaticResource CardLabel}" />
+                        <Button HorizontalAlignment="Right" Style="{StaticResource GhostButton}"
+                                Content="REFRESH" Click="Refresh_Click" />
+                    </Grid>
+
+                    <Grid Padding="6,4" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="SYM"    Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="0" />
+                        <TextBlock Text="QTY"    Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="1" />
+                        <TextBlock Text="AVG"    Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="2" />
+                        <TextBlock Text="LAST"   Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="3" />
+                        <TextBlock Text="P&amp;L" Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="4" />
+                        <TextBlock Text="%"      Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="5" />
+                        <TextBlock Text="SELL QTY" Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="6" />
+                        <TextBlock Text=""       Style="{StaticResource Muted}" Grid.Column="7" />
+                        <TextBlock Text=""       Style="{StaticResource Muted}" Grid.Column="8" />
+                    </Grid>
+
+                    <ItemsControl x:Name="PositionsList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:Position">
+                                <Grid Padding="6,4" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Bind Symbol}" Style="{StaticResource Mono}" Grid.Column="0"
+                                               TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Symbol}" />
+                                    <TextBlock Text="{x:Bind Quantity}" Style="{StaticResource Mono}" Grid.Column="1" />
+                                    <TextBlock Text="{x:Bind AvgPrice}" Style="{StaticResource Mono}" Grid.Column="2" />
+                                    <TextBlock Text="{x:Bind CurrentPrice}" Style="{StaticResource Mono}" Grid.Column="3" />
+                                    <TextBlock Text="{x:Bind Pnl}" Style="{StaticResource Mono}" Grid.Column="4" />
+                                    <TextBlock Text="{x:Bind PnlPct}" Style="{StaticResource Mono}" Grid.Column="5" />
+                                    <TextBox Grid.Column="6" Width="70" PlaceholderText="all"
+                                             Tag="{x:Bind Symbol}" />
+                                    <Button Grid.Column="7" Content="SELL" Style="{StaticResource GhostButton}"
+                                            Tag="{x:Bind Symbol}" Click="Sell_Click" Margin="6,0,0,0" />
+                                    <Button Grid.Column="8" Content="SELL ALL" Style="{StaticResource GhostButton}"
+                                            Tag="{x:Bind Symbol}" Click="SellAll_Click" Margin="6,0,0,0" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <TextBlock x:Name="ErrorText" Style="{StaticResource Muted}" Foreground="{StaticResource DownBrush}" TextWrapping="Wrap" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>
