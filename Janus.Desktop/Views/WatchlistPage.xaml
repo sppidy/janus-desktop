@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Janus.Desktop.Views.WatchlistPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:Janus.Desktop.Models"
+    NavigationCacheMode="Required"
+    Background="{StaticResource BgBrush}">
+
+    <ScrollViewer Padding="20">
+        <StackPanel Spacing="16">
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <Grid>
+                        <TextBlock Text="// WATCHLIST" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="UpdatedText"
+                                   HorizontalAlignment="Right"
+                                   Style="{StaticResource Muted}" />
+                    </Grid>
+
+                    <GridView x:Name="TilesView"
+                              Background="Transparent"
+                              SelectionMode="None"
+                              IsItemClickEnabled="False">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="models:WatchTileVm">
+                                <Border Background="{StaticResource Bg2Brush}"
+                                        BorderBrush="{x:Bind DirBrush}"
+                                        BorderThickness="4,1,1,1"
+                                        Padding="14,10,14,10"
+                                        Width="160"
+                                        Height="84"
+                                        CornerRadius="0">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="{x:Bind Symbol}"
+                                                   Style="{StaticResource Muted}"
+                                                   CharacterSpacing="200" />
+                                        <TextBlock Text="{x:Bind PriceText}"
+                                                   Style="{StaticResource Mono}"
+                                                   FontSize="22"
+                                                   FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                    </GridView>
+
+                    <TextBlock x:Name="EmptyText"
+                               Text="No symbols in active watchlist."
+                               Style="{StaticResource Muted}"
+                               Visibility="Collapsed" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock x:Name="ErrorText"
+                       Style="{StaticResource Muted}"
+                       Foreground="{StaticResource DownBrush}" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

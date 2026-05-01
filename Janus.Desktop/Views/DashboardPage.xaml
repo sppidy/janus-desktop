@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Janus.Desktop.Views.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:Janus.Desktop.Models"
+    NavigationCacheMode="Required"
+    Background="{StaticResource BgBrush}">
+
+    <ScrollViewer Padding="20">
+        <StackPanel Spacing="16">
+
+            <!-- KPI row -->
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource Card}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="TOTAL VALUE" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="TotalValueText" Text="—" Style="{StaticResource KpiValue}" />
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="CASH" Style="{StaticResource Muted}" />
+                            <TextBlock x:Name="CashText" Text="—" Style="{StaticResource Mono}" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource Card}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="RETURN" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="ReturnText" Text="—" Style="{StaticResource KpiValue}" />
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="REALIZED" Style="{StaticResource Muted}" />
+                            <TextBlock x:Name="RealizedText" Text="—" Style="{StaticResource Mono}" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource Card}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="POSITIONS" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="PosCountText" Text="—" Style="{StaticResource KpiValue}" />
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="PORTFOLIO" Style="{StaticResource Muted}" />
+                            <TextBlock x:Name="PortfolioText" Text="—" Style="{StaticResource Mono}" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="3" Style="{StaticResource Card}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="AUTOPILOT" Style="{StaticResource CardLabel}" />
+                        <TextBlock x:Name="AutoStateText" Text="—" Style="{StaticResource KpiValue}" FontSize="18" />
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Button Style="{StaticResource GhostButton}" Content="START" Click="AutoStart_Click" />
+                            <Button Style="{StaticResource GhostButton}" Content="STOP"  Click="AutoStop_Click" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Positions + Trades row -->
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource Card}">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="// OPEN POSITIONS" Style="{StaticResource CardLabel}" />
+                        <Grid Padding="6,4" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="80" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="SYM"  Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="0" />
+                            <TextBlock Text="QTY"  Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="1" />
+                            <TextBlock Text="AVG"  Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="2" />
+                            <TextBlock Text="LAST" Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="3" />
+                            <TextBlock Text="P&amp;L" Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="4" />
+                            <TextBlock Text="%"    Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="5" />
+                        </Grid>
+                        <ItemsControl x:Name="PositionsList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:Position">
+                                    <Grid Padding="6,4" ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="110" />
+                                            <ColumnDefinition Width="60" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="80" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{x:Bind Symbol}" Style="{StaticResource Mono}" Grid.Column="0"
+                                                   TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Symbol}" />
+                                        <TextBlock Text="{x:Bind Quantity}" Style="{StaticResource Mono}" Grid.Column="1" />
+                                        <TextBlock Text="{x:Bind AvgPrice}" Style="{StaticResource Mono}" Grid.Column="2" />
+                                        <TextBlock Text="{x:Bind CurrentPrice}" Style="{StaticResource Mono}" Grid.Column="3" />
+                                        <TextBlock Text="{x:Bind Pnl}" Style="{StaticResource Mono}" Grid.Column="4" />
+                                        <TextBlock Text="{x:Bind PnlPct}" Style="{StaticResource Mono}" Grid.Column="5" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource Card}">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="// RECENT TRADES" Style="{StaticResource CardLabel}" />
+                        <Grid Padding="6,4" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="55" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="55" />
+                                <ColumnDefinition Width="85" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="TIME"  Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="0" />
+                            <TextBlock Text="SIDE"  Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="1" />
+                            <TextBlock Text="SYM"   Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="2" />
+                            <TextBlock Text="QTY"   Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="3" />
+                            <TextBlock Text="PRICE" Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="4" />
+                            <TextBlock Text="P&amp;L" Style="{StaticResource Muted}" CharacterSpacing="250" Grid.Column="5" />
+                        </Grid>
+                        <ItemsControl x:Name="TradesList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:Trade">
+                                    <Grid Padding="6,4" ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="130" />
+                                            <ColumnDefinition Width="55" />
+                                            <ColumnDefinition Width="110" />
+                                            <ColumnDefinition Width="55" />
+                                            <ColumnDefinition Width="85" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{x:Bind FormattedTime}" Style="{StaticResource Mono}" Grid.Column="0" />
+                                        <TextBlock Text="{x:Bind ResolvedSide}" Style="{StaticResource Mono}" FontWeight="SemiBold" Grid.Column="1" />
+                                        <TextBlock Text="{x:Bind Symbol}" Style="{StaticResource Mono}" Grid.Column="2"
+                                                   TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Symbol}" />
+                                        <TextBlock Text="{x:Bind Quantity}" Style="{StaticResource Mono}" Grid.Column="3" />
+                                        <TextBlock Text="{x:Bind FormattedPrice}" Style="{StaticResource Mono}" Grid.Column="4" />
+                                        <TextBlock Text="{x:Bind FormattedPnl}" Style="{StaticResource Mono}" Grid.Column="5" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <TextBlock x:Name="ErrorText" Style="{StaticResource Muted}" Foreground="{StaticResource DownBrush}" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>
