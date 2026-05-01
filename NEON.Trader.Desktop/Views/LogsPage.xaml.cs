@@ -58,19 +58,14 @@ public sealed partial class LogsPage : Page
                 await DelayOrCancel(TimeSpan.FromSeconds(5), ct);
                 continue;
             }
-            // Strip the token from the logged URL.
-            var sanitized = uri.GetLeftPart(UriPartial.Path);
-            Append($"[{FormatNow()}] [logs] connecting {sanitized}\r\n");
+            // URL no longer carries the token — full URI is now safe to log.
+            Append($"[{FormatNow()}] [logs] connecting {uri}\r\n");
 
             using var ws = new ClientWebSocket();
-            ws.Options.RemoteCertificateValidationCallback = (_, _, _, _) => true;
+            ws.Options.RemoteCertificateValidationCallback = TlsTrust.MakeCallback();
             ws.Options.KeepAliveInterval = TimeSpan.FromSeconds(30);
-            // Also set the API key as a header in case the query-string token is stripped upstream.
-            var key = _services.Settings.ActiveProfile?.ApiKey;
-            if (!string.IsNullOrEmpty(key))
-            {
-                try { ws.Options.SetRequestHeader("X-API-Key", key); } catch { }
-            }
+            // Auth via X-API-Key header — never in the URL.
+            _services.Api.ConfigureLogsWs(ws);
 
             try
             {

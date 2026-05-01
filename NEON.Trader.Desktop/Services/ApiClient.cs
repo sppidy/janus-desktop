@@ -34,10 +34,14 @@ public sealed class ApiClient
         _settings = settings;
         var handler = new SocketsHttpHandler
         {
-            // Self-hosted endpoint often uses a self-signed cert — the app is private-network-only.
+            // Self-hosted endpoint often uses a self-signed cert. Validation is
+            // delegated to TlsTrust which (in order) accepts: chains that are
+            // cleanly valid, or certs matching TRADER_BACKEND_CERT_THUMBPRINT,
+            // or — only if explicitly opted in via TRADER_ALLOW_INSECURE_TLS=1
+            // — anything. See Services/TlsTrust.cs for the full policy.
             SslOptions = new SslClientAuthenticationOptions
             {
-                RemoteCertificateValidationCallback = (_, _, _, _) => true,
+                RemoteCertificateValidationCallback = TlsTrust.Validate,
             },
             PooledConnectionLifetime = TimeSpan.FromMinutes(2),
         };
@@ -157,8 +161,10 @@ public sealed class ApiClient
     }
 
     /// <summary>
-    /// Build the /ws/logs URL for the active profile. Caller owns the ClientWebSocket
-    /// so it can subscribe to events directly.
+    /// Build the /ws/logs URL for the active profile. The API key is NOT in
+    /// the URL — caller must set the X-API-Key header on the ClientWebSocket
+    /// (see <see cref="ConfigureLogsWs"/>) so the key never lands in reverse-
+    /// proxy access logs / browser-history / tracing.
     /// </summary>
     public Uri? BuildLogsWsUri()
     {
@@ -166,7 +172,18 @@ public sealed class ApiClient
         if (profile is null || string.IsNullOrEmpty(profile.BaseUrl)) return null;
         var baseUri = new Uri(profile.BaseUrl);
         var wsScheme = baseUri.Scheme == "https" ? "wss" : "ws";
-        var key = Uri.EscapeDataString(profile.ApiKey);
-        return new Uri($"{wsScheme}://{baseUri.Authority}/ws/logs?token={key}");
+        return new Uri($"{wsScheme}://{baseUri.Authority}/ws/logs");
+    }
+
+    /// <summary>
+    /// Stamp the active profile's API key onto a ClientWebSocket via the
+    /// X-API-Key header so the WS handshake authenticates without ever
+    /// putting the key in a URL.
+    /// </summary>
+    public void ConfigureLogsWs(System.Net.WebSockets.ClientWebSocket ws)
+    {
+        var profile = _settings.ActiveProfile;
+        if (profile is null || string.IsNullOrEmpty(profile.ApiKey)) return;
+        try { ws.Options.SetRequestHeader("X-API-Key", profile.ApiKey); } catch { /* already-connected */ }
     }
 }
