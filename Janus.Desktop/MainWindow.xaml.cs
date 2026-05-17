@@ -59,7 +59,7 @@ public sealed partial class MainWindow : Window
         {
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
-            Title = "NEON.TRADER";
+            Title = "JANUS";
 
             if (AppWindow?.TitleBar is { } tb)
             {
